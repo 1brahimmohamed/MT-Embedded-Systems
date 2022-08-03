@@ -1,0 +1,23 @@
+/*
+ ============================================================================
+ Name        : Problem11.c
+ Author      : Ibrahim
+ Version     :
+ Copyright   : Your copyright notice
+ Description : Print sum of first 100 integers.
+ ============================================================================
+ */
+
+#include <stdio.h>
+
+int main(void) {
+
+    int sum = 0;
+
+    for (int i = 1; i <= 100; ++i) {
+        sum += i;
+    }
+
+    printf("The sum of first 100 integer is %d", sum);
+	return 0;
+}
