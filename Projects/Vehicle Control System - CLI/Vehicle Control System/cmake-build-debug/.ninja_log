@@ -1,0 +1,27 @@
+# ninja log v5
+1	202	6831424892585470	build.ninja	b33e1f5e007637b4
+10	107	6831416740692813	CMakeFiles/Vehicle_Control_System.dir/src/mainMenu.c.obj	ca5eaa50072c7ed9
+2	97	6831416740593080	CMakeFiles/Vehicle_Control_System.dir/src/main.c.obj	4e3d901a32f1a8c9
+81	190	6831418510658778	Vehicle_Control_System.exe	bd4d56d2646b3de9
+2	81	6831418509641494	CMakeFiles/Vehicle_Control_System.dir/src/vehiclesOnOff.c.obj	27d0ff238068d828
+4	119	6831376479895108	CMakeFiles/Vehicle_Control_System.dir/src/test.c.obj	23eebee996d0f9cd
+6	98	6831444177713111	CMakeFiles/Vehicle_Control_System.dir/src/mainMenu.c.obj	ca5eaa50072c7ed9
+2	98	6831444177713111	CMakeFiles/Vehicle_Control_System.dir/src/main.c.obj	4e3d901a32f1a8c9
+9	109	6831444177802879	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+112	236	6831444179069483	Vehicle_Control_System.exe	13a0934ea6d315f9
+3	83	6831450657936170	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+83	181	6831450658863690	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	79	6831451053292973	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+79	175	6831451054220495	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	91	6831451266873239	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+91	202	6831451267930461	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	86	6831452868888294	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+86	202	6831452869995303	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	92	6831453074546977	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+92	226	6831453075813572	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	91	6831454037172860	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+91	225	6831454038469410	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	158	6831780177473997	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+158	271	6831780178558070	Vehicle_Control_System.exe	13a0934ea6d315f9
+2	143	6831822744862945	CMakeFiles/Vehicle_Control_System.dir/src/vehicleState.c.obj	4999955ba8087788
+143	322	6831822746608260	Vehicle_Control_System.exe	13a0934ea6d315f9
