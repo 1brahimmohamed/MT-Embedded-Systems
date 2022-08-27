@@ -1,0 +1,5 @@
+23:10:05 **** Incremental Build of configuration Debug for project Vehicle Control System ****
+Info: Internal Builder is used for build
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\mainMenu.o" "..\\src\\mainMenu.c" 
+gcc -o "Vehicle Control System.exe" "src\\main.o" "src\\mainMenu.o" "src\\vehicleState.o" 
+Info: Nothing to build for Vehicle Control System

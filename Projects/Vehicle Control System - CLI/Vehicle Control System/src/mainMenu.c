@@ -3,14 +3,13 @@
  Name        : mainMenu.c
  Author      : Ibrahim Mohamed
  Version     : 1.0
- Copyright   : Your copyright notice
+ Copyright   :
  Description : Display the Main Menu of the program
  ============================================================================
  */
 
 
 #include "mainMenu.h"
-
 
 /*
  * Display Main Menu for the system and takes input from the user to turn the Engine On/Off or quit the system
@@ -23,7 +22,7 @@ void mainMenu(void) {
     printf("2- Turn off Vehicle Engine\n");
     printf("3- Quit System\n");
 
-
+    fflush(stdout);
     scanf("%d",&menuChoice);                // takes input from the user
 
     switch (menuChoice) {

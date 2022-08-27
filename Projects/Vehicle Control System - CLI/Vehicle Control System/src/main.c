@@ -3,7 +3,7 @@
  Name        : main.c
  Author      : Ibrahim Mohamed
  Version     : 1.0
- Copyright   : Your copyright notice
+ Copyright   :
  Description : Main driver file
  ============================================================================
  */
@@ -15,8 +15,10 @@
  * Program starts here
  * */
 int main(void) {
+
     while(true){
         mainMenu();
     }
+
     return EXIT_SUCCESS;
 }
