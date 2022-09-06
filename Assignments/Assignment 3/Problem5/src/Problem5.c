@@ -3,31 +3,32 @@
  Name        : Problem5.c
  Author      : Ibrahim
  Version     :
- Copyright   : Your copyright notice
- Description : C function to check if the input is an even number or an odd number
+ Description : Linear Search Algorithm
  ============================================================================
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-int isOdd(int number);
+
+int findIndexOfFirstOccurrence(int* arr, int toBeFound,int size);
 
 int main(void) {
-    int num;
 
-    printf("Enter the number: ");
-    scanf("%d", &num);
+	int arr[] = {1, 2,3,4,4,4};
+		int arraySize = sizeof(arr)/sizeof(arr[0]);
+		int index = findIndexOfFirstOccurrence(arr, 4, arraySize);
+		printf("The Index is: %d", index);
 
-    if(isOdd(num) ==1)
-        printf("The number is Odd");
-    else
-        printf("The number is even");
-
-    return 0;
+		return EXIT_SUCCESS;
 }
 
-int isOdd(int number){
-    if(number%2 != 0)
-        return 1;
-    else return 0;
+int findIndexOfFirstOccurrence(int* const arr, int toBeFound,int size){
+	int i;
+	for(i = 0; i < size; i++){
+		if(arr[i] == toBeFound)
+			return i;
+	}
+
+	return -1;
+
 }

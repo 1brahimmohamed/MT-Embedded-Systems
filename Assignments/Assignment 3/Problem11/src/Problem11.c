@@ -4,36 +4,39 @@
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C function that checks if the input number is a power of 2
+ Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdlib.h>
 
-bool isPowerOfTwo(int num);
+int charFreqency(char* const str, char charcter);
 
 int main(void) {
+	 char str[1000];
+	 char ch;
+	 int number;
 
-    int num;
-    scanf("%d", &num);
+	 printf("Enter a string: ");
+	 fflush(stdout);
+	 gets(str);
 
-    if(isPowerOfTwo(num) == 1)
-        printf("Yes");
-    else
-        printf("No");
-	return 0;
+	 printf("Enter a character to find the frequency: ");
+	 fflush(stdout);
+	 scanf("%c",&ch);
+
+	 number = charFreqency(str,ch);
+	 printf("Frequency of %c = %d", ch, number);
+
+	return EXIT_SUCCESS;
 }
 
-bool isPowerOfTwo(int num){
-
-    if (num == 0)
-        return 0;
-    while (num != 1)
-    {
-        if (num%2 != 0)
-            return 0;
-        num = num/2;
-    }
-    return 1;
+int charFreqency(char* const str, char charcter){
+	int i,freq = 0;
+		for(i = 0; str[i] != '\0'; i++){
+			if(charcter == str[i])
+				freq++;
+	    }
+		return freq;
 }

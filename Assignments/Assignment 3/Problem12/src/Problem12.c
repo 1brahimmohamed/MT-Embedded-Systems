@@ -4,33 +4,31 @@
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : program that reads a positive integer and computes the factorial
+ Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-int heatingTime(int temp);
+int lengthStr(char* const str);
 
 int main(void) {
-    int temp;
-    scanf("%d", &temp);
-    printf("The Heating time is %d", heatingTime(temp));
-    return 0;
+	char str[20];
+	printf("Please enter the sting: ");
+	fflush(stdout);
+	gets(str);
+	printf("\n");
+	int len = lengthStr(str);
+	printf("size is: %d\n",len);
+	return EXIT_SUCCESS;
 }
+int lengthStr(char* const str){
+	int i,length;
 
-int heatingTime(int temp){
+	while(str[i] != '\0'){
+		length++;
+	}
 
-    if(temp > 100)
-        return 0;
-    else if(temp > 90)
-        return 1;
-    else if(temp > 60)
-        return 3;
-    else if (temp > 30)
-        return 5;
-    else if (temp > 0)
-        return 7;
-
-    return 0;
+	return length;
 }

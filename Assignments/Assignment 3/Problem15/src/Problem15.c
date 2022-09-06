@@ -1,29 +1,45 @@
-/*
+ /*
  ============================================================================
  Name        : Problem15.c
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C function to count the number of 1’s in an unsigned 32-bit integer
+ Description :
  ============================================================================
  */
 
 #include <stdio.h>
-#include <stdlib.h>
-int countOnes(unsigned int num);
 
-int main(void) {
-    unsigned int num;
-    scanf("%d",&num);
-    printf("%d", countOnes(num));
-    return 0;
+void string_cat(char str1[],char str2[])
+{
+	int i, j;
+	/* This loop is to store the length of str1 in i
+	 * It just counts the number of characters in str1
+	 * You can also use strlen instead of this.
+	 */
+	for(i=0; str1[i]!='\0'; ++i);
+
+	/* This loop would concatenate the string str2 at
+	 * the end of str1
+	 */
+	for(j=0; str2[j]!='\0'; ++j, ++i)
+	{
+		str1[i]=str2[j];
+	}
+	/* \0 represents end of string */
+	str1[i]='\0';
 }
 
-int countOnes(unsigned int num){
-    unsigned int count = 0;
-    while (num) {
-        count += num & 1;
-        num >>= 1;
-    }
-    return count;
+int main()
+{
+   char s1[100], s2[50];
+   printf("\nEnter first string: ");
+   gets(s1);
+   printf("\nEnter second string: ");
+   gets(s2);
+
+   string_cat(s1,s2);
+   printf("\nOutput: %s",s1);
+
+   return 0;
 }

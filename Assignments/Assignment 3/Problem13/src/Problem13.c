@@ -1,28 +1,41 @@
-/*
- ============================================================================
+ /*============================================================================
  Name        : Problem13.c
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : function to add two floating numbers. Determine the integer floor of the sum
+ Description : Hello World in C, Ansi-style
  ============================================================================
  */
+ 
+#include<stdio.h>
 
-#include <stdio.h>
-#include <math.h>
-
-int floorSumOfNumbers(float num1, float num2);
-
-int main(void) {
-    float num1, num2;
-    printf("Please Enter the numbers you would like to add: ");
-    scanf("%f%f", &num1, &num2);
-
-    printf("The floor of sum is: %d", floorSumOfNumbers(num1,num2));
-	return 0;
+void remove_all_except_alphabet(char str[])
+{
+	int i, j;
+	for(i = 0; str[i] != '\0'; ++i)
+    {
+        while ( !((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')) &&  (str[i] != '\0') )
+        {
+        	/* Enter here in case the element is not alphabet and it is not equals to null */
+            for(j = i; str[j] != '\0'; ++j)
+            {
+				/* remove this not alphabet character by making each element equals to the value of the next element */
+                str[j] = str[j+1];
+            }
+        }
+    }
 }
 
-int floorSumOfNumbers(float num1, float num2){
-    float sum = num1 + num2;
-    return floor(sum);
+int main()
+{
+    char line[1000];
+
+    printf("Enter a string: ");
+    gets(line);
+
+    remove_all_except_alphabet(line);
+
+    printf("Output String: ");
+    puts(line);
+    return 0;
 }

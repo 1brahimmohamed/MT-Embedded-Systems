@@ -4,43 +4,34 @@
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : program to make a simple calculator using switch-case. The calculator takes the operation
-                (+ or – or * or /) and takes the two input arguments and print the results.
+ Description :
  ============================================================================
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-int countHoles(int num);
+void UppercaseToLowercase(char * str);
 
 int main(void) {
-    int num;
-    printf("Enter the number: ");
-    scanf("%d", &num);
-
-    printf("The Number of holes is: %d", countHoles(num));
-	return 0;
+	char str[20];
+	printf("Please enter the required sting message : ");
+	fflush(stdout);
+	gets(str);
+	printf("\n");
+	UppercaseToLowercase(str);
+	printf("Message after converting : %s\n",str);
+	return EXIT_SUCCESS;
 }
 
-int countHoles(int num){
-    int rem, holes;
-
-    while(num != 0)
-    {
-        rem=num%10;
-
-        switch (rem) {
-            case 4:
-            case 6:
-            case 9:
-                holes++;
-                break;
-            case 8:
-                holes += 2;
-                break;
-        }
-        num /= 10;
-    }
-    return holes;
+void UppercaseToLowercase(char * str){
+	int i=0;
+	while(str[i] != '\0')
+	{
+		if((str[i]>='A') && (str[i]<='Z'))
+		{
+			str[i] = str[i] + 32;
+		}
+		i++;
+	}
 }

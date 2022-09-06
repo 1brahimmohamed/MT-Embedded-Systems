@@ -1,33 +1,29 @@
 /*
  ============================================================================
- Name        : Problem7.c
+ Name        : Problem8.c
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C Function that reads two integers and checks if the first is multiple of the second
+ Description : program that computes the nth term of the arithmetic series
  ============================================================================
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-int isMultipleOf(int num1, int num2);
+
 int main(void) {
-    int num1, num2;
 
-    printf("Enter the 2 Numbers: ");
-    scanf("%d%d", &num1, &num2);
+	int arr[100],i;
+	    int index;
+	    printf("Enter the element index : ");
+	    fflush(stdout);
+	    scanf("%d",&index);
+	    arr[0] = 1;
+	    for(i=1; i<100; i++)
+	    {
+	    	arr[i]=arr[i-1]+2;
+	    }
+	    printf("\nThe %dth term is:%d",index,arr[index-1]);
 
-    if(isMultipleOf(num1,num2) == 1)
-        printf("Yes");
-    else
-        printf("No");
-
-    return 0;
-}
-
-int isMultipleOf(int num1, int num2){
-    if (num1%num2 == 0)
-        return 1;
-    else return 0;
-}
-
+	return EXIT_SUCCESS;
+	}

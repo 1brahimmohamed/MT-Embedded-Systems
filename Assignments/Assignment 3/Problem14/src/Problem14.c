@@ -1,25 +1,40 @@
-/*
+ /*
  ============================================================================
  Name        : Problem14.c
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C Function that calculate the Fibonacci series using recursive method.
+ Description :
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-int fabSeries(int reps);
+#include<stdio.h>
+#include<string.h>
 
-int main(void) {
-
-    printf("%d",fabSeries(10));
-	return 0;
+void reverse_string(char s[])
+{
+	int i = 0, j;
+	char temp;
+	j = strlen(s) - 1;
+	
+	/* null will remained in the same place just start swapping the array element */
+	while (i < j)
+	{
+		temp = s[i];
+		s[i] = s[j];
+		s[j] = temp;
+		i++;
+		j--;
+	}
 }
 
-int fabSeries(int reps){
-    if (reps <= 1)
-        return reps;
-    return fabSeries(reps-1) + fabSeries(reps-2);
+int main() {
+   char str[1000];
+   printf("\nEnter the string :");
+   gets(str);
+
+   reverse_string(str);
+
+   printf("\nReverse string is :%s", str);
+   return (0);
 }

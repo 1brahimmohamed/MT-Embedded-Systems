@@ -1,30 +1,45 @@
-/*
+ /*
  ============================================================================
  Name        : Problem16.c
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C function to count the number of 1’s in an unsigned 8-bit integer
+ Description :
  ============================================================================
  */
 
-
 #include <stdio.h>
-#include <stdlib.h>
-int countOnes(unsigned int num);
 
-int main(void) {
-    unsigned int num;
-    scanf("%d",&num);
-    printf("%d", countOnes(num));
-    return 0;
+void Reverse_Array(int Array_size, int* Array)
+{
+	int i = 0, temp;
+	while(i <  (Array_size / 2))
+	{
+		temp = Array[i];
+		Array[i] = Array[Array_size - 1 - i];
+		Array[Array_size - 1 - i] = temp;
+		i++;
+	}
 }
 
-int countOnes(unsigned int num){
-    unsigned int count = 0;
-    while (num) {
-        count += num & 1;
-        num >>= 1;
-    }
-    return count;
+int main(void)
+{
+	int i;
+	int array[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+	/* Print the array before call the reverse function */
+	for(i=0;i<10;i++)
+	{
+		printf("%d ",array[i]);
+	}
+	printf("\n");
+
+	Reverse_Array(10,array);
+
+	/* Print the array after call the reverse function */
+	for(i=0;i<10;i++)
+	{
+		printf("%d ",array[i]);
+	}
+	return 0;
 }

@@ -4,28 +4,40 @@
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : C Function that swaps the value of two integer numbers
+ Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
 #include <stdio.h>
-int * swap(int num1, int num2);
+#include <stdlib.h>
+
+
+void fibonacciLoop(int nthTerm);
+int fibonacciRecursion(int nthTerm);
+
 int main(void) {
-    int num1,num2;
-    printf("Enter the 2 numbers to swap: ");
-    scanf("%d%d", &num1, &num2);
-    int *result = swap(num1,num2);
-    num1 = result[0];
-    num2 = result[1];
-    printf("%d %d", num1, num2);
-    return 0;
+
+	return EXIT_SUCCESS;
 }
 
-int * swap(int num1, int num2){
-    int container;
-    container = num2;
-    num2 = num1;
-    num1 = container;
-    int result[2] = {num1, num2};
-    return result;
+void fibonacciLoop(int nthTerm){
+
+	int i = 2,fabSer[100];
+	fabSer[0] = 1;
+	fabSer[1] = 1;
+	for(i=2 ; i < 100; i++){
+		fabSer[i] =  fabSer[i-1] + fabSer[i-2];
+	}
+	printf("the %dth term is %d", nthTerm, fabSer[nthTerm-1]);
+}
+
+int fibonacciRecursion(int nthTerm){
+
+	if(nthTerm==0 || nthTerm==1)
+	{
+		return nthTerm;
+	}
+	else{
+		return fibonacciRecursion(nthTerm-1) + fibonacciRecursion(nthTerm-1);
+	}
 }

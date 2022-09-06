@@ -4,43 +4,44 @@
  Author      : Ibrahim
  Version     :
  Copyright   : Your copyright notice
- Description : Write a C Function that return the addition or subtraction or multiplication or division for two numbers.
+ Description : Hello World in C, Ansi-style
  ============================================================================
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-int calculator(int num1, int num2, char op);
+
+void selectionSort(int *arr, int size);
+
 int main(void) {
-    int num1 , num2;
-    char op;
 
-    printf("Enter the 2 numbers and the operation respectively: ");
-    scanf("%d %d %c", &num1, &num2, &op);
+	int arr[5] = {5, 1, 4, 2, 8};
+	int arraySize = sizeof(arr)/sizeof(arr[0]);
+	printf("array size is %d \n", arraySize);
+	selectionSort(arr, arraySize);
+	for(int i = 0; i < arraySize; i++)
+		printf("%d ,",arr[i]);
 
-    printf("The result is : %d", calculator(num1,num2,op));
-
-    return 0;
+	return EXIT_SUCCESS;
 }
 
-int calculator(int num1, int num2, char op){
-    int result;
+void selectionSort(int *arr, int size){
 
-    switch (op) {
-        case '+':
-            result= num1 + num2;
-            break;
-        case '-':
-            result= num1 - num2;
-            break;
-        case '*':
-            result= num1 * num2;
-            break;
-        case '/':
-            result= num1 / num2;
-            break;
-        default:
-            return EXIT_FAILURE;
+    int i,j,min,temp;
+    for(i=0;i<size-1;i++)
+    {
+        min=i;
+        for(j=i+1;j<size;j++)
+		{
+            if(arr[min]>arr[j])
+			{
+				min=j;
+			}
+        }
+        temp = arr[i];
+        arr[i] = arr[min];
+        arr[min] = temp;
     }
-    return result;
+
+
 }
