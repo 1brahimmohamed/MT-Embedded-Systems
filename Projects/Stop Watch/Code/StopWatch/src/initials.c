@@ -16,7 +16,7 @@ void initalize7Segments(void){
 	PORTA = 0xFF;
 }
 
-void InitialzieTimer1CompareMode(void){
+void initialzieTimer1CompareMode(void){
 
 	TCCR1A = (1<<COM1A0) | (1<<FOC1A);
 	TCCR1B = (1<<CS10) | (1<<CS12) | (1<<WGM12);
@@ -25,6 +25,8 @@ void InitialzieTimer1CompareMode(void){
 	TCNT1 = 0;
 
 	// set timer compare value to 977 (based on calculations)
+	// F_CPU/1024 -> 977
+
 	OCR1A = 997;
 
 	// Enable the global interrupts
@@ -35,7 +37,46 @@ void InitialzieTimer1CompareMode(void){
 
 }
 
-void DISPLAY (char num){
+void initializeResetBtn(void){
 
-	PORTC = num;
+	// setting pin to input pin
+	DDRD &= ~(1<<PD2);
+
+	// setting pin 2 in PORTD to enable internal pull up
+	PORTD |= (1<<PD2);
+
+	// interrupt is done with falling edge
+	MCUCR |= (1<<ISC01);
+
+	// enable external interrupt 0
+	GICR |= (1<<INT0);
 }
+
+void initializePauseBtn(void){
+
+	// setting pin to input pin
+	DDRD &= ~(1<<PD3);
+
+	// interrupt is done with falling edge
+	MCUCR |= (1<<ISC10) | (1<<ISC11);
+
+	// enable external interrupt 1
+	GICR |= (1<<INT1);
+
+}
+
+void initializeResumeBtn(void){
+
+	// setting pin to input pin
+	DDRB &= ~(1<<PB2);
+
+	// setting pin 2 in PORTB to enable internal pull up
+	PORTB |= (1<<PB2);
+
+	// interrupt is done with falling edge
+	MCUCSR &= ~(1<<ISC2);
+
+	// enable external interrupt 2
+	GICR |= (1<<INT2);
+}
+

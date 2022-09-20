@@ -2,7 +2,7 @@
  * main.c
  *
  *  Created on: Sep 20, 2022
- *      Author: I1bra
+ *      Author: Ibrahim
  */
 
 #include<avr/io.h>
@@ -43,8 +43,27 @@ ISR(TIMER1_COMPA_vect){
 	}
 
 }
+ISR (INT0_vect){
 
+	// when interrupt happens it resets the watch
+	sec = 0;
+	min = 0;
+	hrs = 0;
+}
+ISR (INT1_vect){
 
+	// when interrupt happens it pauses the watch by disabling the timer
+
+	// timer 1 disable
+	TIMSK &= ~(1<<OCIE1A);
+}
+ISR (INT2_vect){
+
+	// when interrupt happens it pauses the watch by enabling the timer agin
+
+	// timer 1 enable
+	TIMSK |= (1<<OCIE1A);
+}
 int main(void){
 
 	sec = 0;
@@ -52,31 +71,34 @@ int main(void){
 	hrs = 0;
 
 	initalize7Segments();
-	InitialzieTimer1CompareMode();
+	initialzieTimer1CompareMode();
+	initializeResetBtn();
+	initializeResumeBtn();
+	initializePauseBtn();
 
 	while(1){
 				PORTA = (1<<0);
-				DISPLAY(sec % 10);
+				PORTC = sec % 10;
 				_delay_ms(3);
 
 				PORTA = (1<<1);
-				DISPLAY(sec / 10);
+				PORTC = sec / 10;
 				_delay_ms(3);
 
-				PORTA = (1<<2); //
-				DISPLAY(min % 10);
+				PORTA = (1<<2);
+				PORTC = min % 10;
 				_delay_ms(3);
 
 				PORTA = (1<<3);
-				DISPLAY(min / 10);
+				PORTC = min / 10;
 				_delay_ms(3);
 
 				PORTA = (1<<4);
-				DISPLAY(hrs % 10);
+				PORTC = hrs % 10;
 				_delay_ms(3);
 
 				PORTA = (1<<5);
-				DISPLAY(hrs / 10);
+				PORTC = hrs / 10;
 				_delay_ms(3);
 	}
 }
