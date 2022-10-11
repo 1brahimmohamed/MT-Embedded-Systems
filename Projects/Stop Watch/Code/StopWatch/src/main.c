@@ -49,6 +49,7 @@ ISR (INT0_vect){
 	sec = 0;
 	min = 0;
 	hrs = 0;
+	TCNT1 = 0;
 }
 ISR (INT1_vect){
 
