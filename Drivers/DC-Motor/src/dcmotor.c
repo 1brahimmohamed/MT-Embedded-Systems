@@ -13,6 +13,11 @@
 #include "pwm.h"
 
 
+/*******************************************************************************
+ *                              Functions Definition                          *
+ *******************************************************************************/
+
+
 /*
  * Description :
  * The Function responsible for setup the direction for the two motor pins through the GPIO driver.

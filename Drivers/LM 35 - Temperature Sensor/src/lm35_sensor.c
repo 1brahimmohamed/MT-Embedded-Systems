@@ -10,6 +10,12 @@
 #include "lm35_sensor.h"
 #include "adc.h"
 
+
+/*******************************************************************************
+ *                              Functions Definition                          *
+ *******************************************************************************/
+
+
 /*
  * Description :
  * Function responsible for calculate the temperature from the ADC digital value.
