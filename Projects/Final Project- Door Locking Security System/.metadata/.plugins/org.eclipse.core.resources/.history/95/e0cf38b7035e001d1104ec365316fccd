@@ -1,0 +1,62 @@
+ /******************************************************************************
+ *
+ * Module: Control MC
+ * File Name: CTRL_Helpers.c
+ * Description: Source file for the CTRL Micro-Controller Helper Functions
+ * Author: Ibrahim Mohamed
+ *
+ *******************************************************************************/
+
+
+#ifndef CTRL_HELPERS_H_
+#define CTRL_HELPERS_H_
+
+#include "buzzer.h"
+#include "uart.h"
+#include "std_types.h"
+#include "timer1.h"
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+#include "dcmotor.h"
+#include "twi.h"
+#include "external_eeprom.h"
+
+/*******************************************************************************
+ *                          DEFINITIONS                                        *
+ *******************************************************************************/
+/*ACKNOWLEDGE FOR BOTH ECUS FOR UART*/
+#define CON_READY 0x10
+#define HMI_READY 0x10
+
+#define DOOR_HOLD 1
+#define DOOR_OPEN 5
+#define DOOR_CLOSE 5
+#define BUZZER_ACTIVE 20
+#define TWI_SLAVE_ADDRESS 1
+#define EEPROM_DELAY 10
+#define PASSWORD_LENGTH 5
+#define UART_DELAY 50
+
+/*******************************************************************************
+ *                          FUNCTIONS  DECLARATION                             *
+ *******************************************************************************/
+void TIMER1_CallBack(void);
+
+void SAVE_PASS(void);
+
+void OPEN_DOOR(void);
+
+void BUZZER_ON(void);
+
+void HMI_checkPassword(void);
+
+void HMI_openDoor(void);
+
+void HMI_createPassword(void);
+
+void HMI_changePassword(void);
+
+void HMI_mainMenu(void);
+
+#endif /* CTRL_HELPERS_H_ */

@@ -1,0 +1,254 @@
+/*
+ * controlMain.c
+ *
+ *  Created on: Nov 1, 2022
+ *      Author: Ahmed
+ */
+
+#include "CTRL_Helpers.h"
+
+/*******************************************************************************
+ *                          	Global Variables                               *
+ *******************************************************************************/
+
+volatile uint8 ticks=0;
+
+uint8 UART_data;
+
+uint8 eeprom_mem_loc_add;
+
+uint8 password[PASS_LENGTH+1];
+uint8 password_confirmed[PASS_LENGTH+1];
+uint8 password_toBeChecked[PASS_LENGTH+1];
+uint8 password_saved[PASS_LENGTH];
+
+int matching_state=0;
+
+int opt;
+
+uint8 i=0;
+
+/*memory address inside eeprom*/
+uint16 eeprom_add=0x0311;
+
+
+/*******************************************************************************
+ *                          	Function Definitions	                       *
+ *******************************************************************************/
+void TIMER1_CallBack(void)
+{
+	++ticks;
+}
+
+void CTRL_savePassword(void)
+{
+	eeprom_add=0x0311;
+	for(i=0;i<PASS_LENGTH;i++)
+	{
+		EEPROM_writeByte(eeprom_add, password[i]);
+		_delay_ms(EEPROM_DELAY);   /*delay 10 ms between each read/write to EEPROM*/
+		eeprom_add++;
+	}
+	/*return to main process after save password*/
+}
+
+void CTRL_openDoor(void)
+{
+	/*to start counting from sec=0*/
+	ticks=0;
+	DcMotor_Rotate(CW, 90);
+	while(ticks<DOOR_OPEN);   /*ROTATE MOTOR TO OPEN THE DOOR FOR 15 SEC*/
+	DcMotor_Rotate(STOP, 0);
+	while(ticks<(DOOR_OPEN+DOOR_HOLD));   /*HOLD FOR 3 SEC TO LET USER ENTER FROM DOOR*/
+	DcMotor_Rotate(ACW, 90);
+	while(ticks<(DOOR_OPEN+DOOR_HOLD+DOOR_CLOSE)); /*ROTATE MOTOR TO CLOSE THE DOOR FOR 15 SEC*/
+	DcMotor_Rotate(STOP, 0);
+}
+
+void CTRL_buzzerOn(void)
+{
+	ticks=0;
+	Buzzer_on();
+	while(ticks<BUZZER_ACTIVE); /*BUZZER IS ACTIVE FOR A MINUTE*/
+	Buzzer_off();
+}
+
+/*
+ * RECEIVE ENTERED PASS AND CHECK IT WITH STOREED ON
+ * */
+void CTRL_passwordCheck(void)
+{
+	/*TO BE RECEIVED FROM CONTROL ECU*/
+	matching_state=1;      /*let 2 pass are matched*/
+	i=0;
+	/*=======================receive password1 by Uart=================================*/
+	UART_sendByte(CON_READY);
+	i=0;
+	while(i<PASS_LENGTH)
+	{
+		password_toBeChecked[i]=UART_recieveByte();
+		_delay_ms(UART_DELAY);
+		++i;
+	}
+
+	eeprom_add=0x0311;
+	for(i=0;i<PASS_LENGTH;i++)
+	{
+		EEPROM_readByte(eeprom_add,password_saved+i);
+		_delay_ms(EEPROM_DELAY);   /*delay 10 ms between each read/write to EEPROM*/
+		eeprom_add++;
+	}
+
+	matching_state=1;
+	i=0;
+	while(i<PASS_LENGTH)
+	{
+		if(password_toBeChecked[i] != password_saved[i])
+		{
+			matching_state=0;
+			break;
+		}
+		i++;
+	}
+}
+
+void OPEN_DOOR_REQ(void)
+{
+	uint8 trial=0;
+	matching_state=0;
+
+	while(matching_state==0 && trial<3)
+	{
+		/*CHECK IF RECEIVED PASS MATCH THAT STORED*/
+		CTRL_passwordCheck();
+
+		/*SEND TO HMI IF ENTERED PASS IS VALID OR NOT
+		 * IF VALID HOLD FOR 1 MIN UNTIL OPEN DOOR
+		 * */
+		while(UART_recieveByte() != HMI_READY);
+		UART_sendByte(matching_state);
+		_delay_ms(UART_DELAY);
+
+		/*increment trial-error*/
+		++trial;
+	}
+
+	if(matching_state==1)
+	{
+		CTRL_openDoor();
+	}
+	else
+	{
+		/*ACTIVATE BUZZER*/
+		CTRL_buzzerOn();
+	}
+}
+
+void CREATE_PASS(void)
+{
+	matching_state=0;
+	while(matching_state==0)
+	{
+		/*TO BE RECEIVED FROM CONTROL ECU*/
+		matching_state=1;      /*let 2 pass are matched*/
+		i=0;
+		/*=======================receive password1 by Uart=================================*/
+		//		UART_sendByte(CON_READY);
+		//		UART_receiveString(PASS);
+		//		_delay_ms(UART_DELAY);
+
+		UART_sendByte(CON_READY);
+		i=0;
+		while(i<PASS_LENGTH)
+		{
+			password[i]=UART_recieveByte();
+			_delay_ms(UART_DELAY);
+			++i;
+		}
+
+		/*=======================receive confirmation password by Uart=================================*/
+		//		UART_sendByte(CON_READY);
+		//		UART_receiveString(PASS_CONF);
+		//		_delay_ms(UART_DELAY);
+
+		UART_sendByte(CON_READY);
+		i=0;
+		while(i<PASS_LENGTH)
+		{
+			password_confirmed[i]=UART_recieveByte();
+			_delay_ms(UART_DELAY);
+			++i;
+		}
+
+		/*=======================check if 2 passwords matched and send result by Uart=================================*/
+		i=0;
+		while(i<PASS_LENGTH)
+		{
+			if(password[i] != password_confirmed[i])
+			{
+				matching_state=0;
+				break;
+			}
+			i++;
+		}
+
+		while(UART_recieveByte() != HMI_READY);
+		UART_sendByte(matching_state);
+		_delay_ms(UART_DELAY);
+	}
+
+	/*save password in EEPROM*/
+	CTRL_savePassword();
+}
+
+void CHANGE_PASS(void)
+{
+
+	uint8 trial=0;
+	matching_state=0;
+
+	while(matching_state==0 && trial<3)
+	{
+		/*CHECK IF RECEIVED PASS MATCH THAT STORED*/
+		CTRL_passwordCheck();
+
+		/*SEND TO HMI IF ENTERED PASS IS VALID OR NOT
+		 * IF VALID HOLD FOR 1 MIN UNTIL OPEN DOOR
+		 * */
+		while(UART_recieveByte() != HMI_READY);
+		UART_sendByte(matching_state);
+		_delay_ms(UART_DELAY);
+
+		/*increment trial-error*/
+		++trial;
+	}
+
+	if(matching_state==1)
+	{
+		CREATE_PASS();
+	}
+	else
+	{
+		/*ACTIVATE BUZZER*/
+		CTRL_buzzerOn();
+	}
+}
+
+void MAIN_OPT(void)
+{
+	/*receive option by uart*/
+
+	UART_sendByte(CON_READY);
+	opt=UART_recieveByte();
+	_delay_ms(UART_DELAY);
+
+	if(opt=='+')
+	{
+		OPEN_DOOR_REQ();
+	}
+	else
+	{
+		CHANGE_PASS();
+	}
+}
+

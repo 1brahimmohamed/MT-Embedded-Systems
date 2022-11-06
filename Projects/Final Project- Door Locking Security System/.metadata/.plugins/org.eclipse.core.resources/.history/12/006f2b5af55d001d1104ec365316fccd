@@ -1,0 +1,386 @@
+ /******************************************************************************
+ *
+ * Module: Human Machine Interface
+ * File Name: HMI_Helpers.c
+ * Description: Header file for the HMI Micro-Controller Helper Functions
+ * Author: Ibrahim Mohamed
+ *
+ *******************************************************************************/
+
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "HMI_Helpers.h"
+#include "lcd.h"
+#include "keypad.h"
+#include "uart.h"
+#include "timer1.h"
+
+/*******************************************************************************
+ *                         		 Global Variables                              *
+ *******************************************************************************/
+
+/*Timer1 ticks*/
+volatile uint8 ticks=0;
+
+
+/*key*/
+uint8 KEYPAD_pressedButton;
+
+/* UART data */
+uint8 UART_data;
+
+/*	Variable to hold the state of matching between the 2 passwords	*/
+uint8 is_matched=0;
+
+/*	Password Vars	
+ *  Length of the passwords +2 bits for the UART data frame
+ * */
+uint8 Password[PASS_LENGTH+2];
+uint8 Password_Confirmed[PASS_LENGTH+2];
+
+int i;
+
+/*******************************************************************************
+ *                          FUNCTIONS  DEFINITIONS                             *
+ *******************************************************************************/
+void TIMER1_CallBack(void)
+{
+	++ticks;
+}
+
+void HMI_checkPassword(void)
+{
+
+	/* wait until the second micro-controller send that it is ready	*/
+	while(UART_recieveByte() != READY);
+
+	/*	send the password byte by byte	*/
+	i = 0
+	while(i<PASS_LENGTH)
+	{
+		UART_sendByte(Password[i]);
+		_delay_ms(UART_DELAY);
+		i++;
+	}
+}
+
+void HMI_createPassword(void)
+{
+	/* at first make is_matched false	*/
+	is_matched = 0;
+
+	/* don't exit until passwords matches*/
+	while(is_matched == 0)
+	{
+		KEYPAD_pressedButton=0;
+
+		/* Clear Screen to write */
+		LCD_clearScreen();
+
+		/*	Show Enter password on LCD	*/
+		LCD_displayString("Enter Your Pass:");
+		LCD_moveCursor(1, 0);
+
+		i = 0;
+		while(i<PASS_LENGTH)
+		{
+			/*	get the pressed key	*/
+			KEYPAD_pressedButton = KEYPAD_getPressedKey();
+
+			if( KEYPAD_pressedButton<=9 && KEYPAD_pressedButton >=0)
+			{
+				/*	show the input response to user	*/
+				LCD_displayCharacter('*');
+
+				/*save password*/
+				Password[i]=KEYPAD_pressedButton;
+
+				_delay_ms(KEYPAD_DELAY);
+			}
+		}
+
+		/*	UART Data frame terminator	*/
+		Password[i]='#';
+		Password[i+1]='\0';
+
+		while(KEYPAD_getPressedKey() != ENTER_KEY);
+
+
+		/*	Password Confirmation	*/
+
+		/* Clear Screen to write */
+		LCD_clearScreen();
+
+		/*	Show Enter password on LCD	*/
+		LCD_displayString("Re-Enter Pass:");
+		LCD_moveCursor(1, 0);
+
+		KEYPAD_pressedButton=0;
+		i = 0;
+
+		while(i<PASS_LENGTH)
+		{
+			/*	get the pressed key	*/
+			KEYPAD_pressedButton = KEYPAD_getPressedKey();
+
+			if(KEYPAD_pressedButton<=9 && KEYPAD_pressedButton >=0)
+			{
+				/*	show the input response to user	*/
+				LCD_displayCharacter('*');
+
+				/*save confirmed password*/
+				Password_Confirmed[i] = KEYPAD_pressedButton;
+
+				_delay_ms(KEYPAD_DELAY);
+			}
+		}
+
+		/*	UART Data frame terminator	*/
+		Password[i]='#';
+		Password[i+1]='\0';
+
+		while(KEYPAD_getPressedKey()!=ENTER_KEY);
+
+		/* Clear Screen to write */
+		LCD_clearScreen();
+
+
+		/*	send password to the other micro-controller b UART	*/
+		while(UART_recieveByte() != READY);
+		i = 0;
+		while(i<PASS_LENGTH)
+		{
+			UART_sendByte(Password[i]);
+			_delay_ms(UART_DELAY);
+			i++;
+		}
+
+		/*	send password confirmation to the other micro-controller by UART	*/
+
+		while(UART_recieveByte() != READY);
+		i = 0;
+		while(i<PASS_LENGTH)
+		{
+			UART_sendByte(Password_Confirmed[i]);
+			_delay_ms(UART_DELAY);
+			i++;
+		}
+
+		/*	Receive the decision from the other micro-controller b UART	to check if they match*/
+		UART_sendByte(READY);
+
+		/*store the value in the is_matched var	*/
+		is_matched=UART_recieveByte();
+
+		_delay_ms(UART_DELAY);
+
+		/*	if two passwords are the same*/
+		if(is_matched==0)
+		{
+			/* Clear Screen to write */
+			LCD_clearScreen();
+
+			/* write not matching	*/
+			LCD_displayString("Not Matching");
+
+			_delay_ms(1000);
+		}
+	}
+
+	/*	if the passwords match	*/
+
+	/* Clear Screen to write */
+	LCD_clearScreen();
+
+	/* write password created	*/
+	LCD_displayString("Password Created");
+	_delay_ms(1000);
+}
+
+void HMI_changePassword(void)
+{
+	is_matched=0;
+	uint8 trial=0;
+
+	while(is_matched==0 && trial<3)
+	{
+		/*WARNING MESS*/
+		if(trial==2)
+		{
+			LCD_clearScreen();
+			LCD_displayString("..LAST TRIAL..");
+			_delay_ms(1000);
+
+		}
+
+		/*READ ENTERED Password FROM USER*/
+		LCD_clearScreen();
+		LCD_displayString("PLZ ENTER Password:");
+
+		LCD_moveCursor(1, 0);
+		int i=0;
+		KEYPAD_pressedButton=0;
+		while(i<PASS_LENGTH)
+		{
+			KEYPAD_pressedButton=KEYPAD_getPressedKey();
+			if(KEYPAD_pressedButton<=9 && KEYPAD_pressedButton >=0)
+			{
+				LCD_displayCharacter('*');
+				/*save password in pass1*/
+				Password[i]=KEYPAD_pressedButton;
+				_delay_ms(KEYPAD_DELAY);
+				++i;
+			}
+		}
+		while(KEYPAD_getPressedKey()!=ENTER_KEY);
+
+		/*CHECK IF ENTERED PASS IS RIGHT SO OPEN THE DOOR OR NOT*/
+		HMI_checkPassword();
+
+		/*OPEN DOOR IF VALID Password IS ENTERED*/
+
+		/*RECEIVE IF VALID BY UART*/
+		UART_sendByte(READY);
+		is_matched=UART_recieveByte();
+		_delay_ms(UART_DELAY);
+
+		/*increment trial-error*/
+		++trial;
+
+		if(is_matched==0)
+		{
+			LCD_clearScreen();
+			LCD_displayString("..UNMATCHED..");
+			_delay_ms(1000);
+		}
+	}
+
+	if(is_matched==1)
+	{
+		/*CREATE NEW Password*/
+		HMI_createPassword();
+	}
+	else{
+		/*ACTIVATE BUZZER*/
+		ticks=0;
+		LCD_clearScreen();
+		LCD_displayString("..ERROR..");
+
+		/*HOLD THE SYSTEM UNTIL BUZZER STOPS*/
+		while(ticks<BUZZER_ACTIVE);
+	}
+}
+
+void HMI_openDoor(void)
+{
+	is_matched=0;
+	uint8 trial=0;
+
+	while(is_matched==0 && trial<3)
+	{
+		/*WARNING MESS*/
+		if(trial==2)
+		{
+			LCD_clearScreen();
+			LCD_displayString("..LAST TRIAL..");
+			_delay_ms(1000);
+
+		}
+
+		/*READ ENTERED Password FROM USER*/
+		LCD_clearScreen();
+		LCD_displayString("PLZ ENTER Password:");
+
+		LCD_moveCursor(1, 0);
+		int i=0;
+		KEYPAD_pressedButton=0;
+		while(i<PASS_LENGTH)
+		{
+			KEYPAD_pressedButton=KEYPAD_getPressedKey();
+			if(KEYPAD_pressedButton<=9 && KEYPAD_pressedButton >=0)
+			{
+				LCD_displayCharacter('*');
+				/*save password in pass1*/
+				Password[i]=KEYPAD_pressedButton;
+				_delay_ms(KEYPAD_DELAY);
+				++i;
+			}
+		}
+		while(KEYPAD_getPressedKey()!=ENTER_KEY);
+
+		/*CHECK IF ENTERED PASS IS RIGHT SO OPEN THE DOOR OR NOT*/
+		HMI_checkPassword();
+
+		/*OPEN DOOR IF VALID Password IS ENTERED*/
+
+		/*RECEIVE IF VALID BY UART*/
+		UART_sendByte(READY);
+		is_matched=UART_recieveByte();
+		_delay_ms(UART_DELAY);
+
+		/*increment trial-error*/
+		++trial;
+
+		if(is_matched==0)
+		{
+			LCD_clearScreen();
+			LCD_displayString("..UNMATCHED..");
+			_delay_ms(1000);
+		}
+	}
+
+	/*OPENING DOOR HOLD*/
+	if(is_matched==1)
+	{
+		LCD_clearScreen();
+		ticks=0;
+		LCD_displayString("OPENING THE DOOR");
+		while(ticks<DOOR_OPEN);   /*ROTATE MOTOR TO OPEN THE DOOR FOR 15 SEC*/
+		LCD_clearScreen();
+		LCD_displayString("DOOR IS OPENED");
+		while(ticks<(DOOR_OPEN+DOOR_HOLD));   /*HOLD FOR 3 SEC TO LET USER ENTER FROM DOOR*/
+		LCD_clearScreen();
+		LCD_displayString("CLOSING THE DOOR");
+		while(ticks<(DOOR_OPEN+DOOR_HOLD+DOOR_CLOSE)); /*ROTATE MOTOR TO CLOSE THE DOOR FOR 15 SEC*/
+	}
+	else{
+		/*ACTIVATE BUZZER*/
+		ticks=0;
+		LCD_clearScreen();
+		LCD_displayString("..ERROR..");
+
+		/*HOLD THE SYSTEM UNTIL BUZZER STOPS*/
+		while(ticks<BUZZER_ACTIVE);
+	}
+}
+
+void HMI_mainMenu(void)
+{
+	LCD_clearScreen();
+	LCD_displayString("+: OPEN DOOR");
+	LCD_moveCursor(1, 0);
+	LCD_displayString("-: CHANGE Password");
+	KEYPAD_pressedButton=KEYPAD_getPressedKey();
+	_delay_ms(KEYPAD_DELAY);
+	while(KEYPAD_pressedButton!='+' && KEYPAD_pressedButton!='-')
+	{
+		KEYPAD_pressedButton=KEYPAD_getPressedKey();
+		_delay_ms(KEYPAD_DELAY);
+	}
+
+	/*send selected option by uart*/
+	while(UART_recieveByte() != READY);
+	UART_sendByte(KEYPAD_pressedButton);
+	_delay_ms(UART_DELAY);
+
+	if(KEYPAD_pressedButton=='+')
+	{
+		/*OPEN DOOR FUNC*/
+		HMI_openDoor();
+	}
+	else{
+		/*CHANGE Password FUNC*/
+		HMI_changePassword();
+	}
+}
+

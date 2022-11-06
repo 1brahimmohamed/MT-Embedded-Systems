@@ -1,0 +1,49 @@
+ /******************************************************************************
+ *
+ * Module: Human Machine Interface
+ * File Name: HMI_Helpers.c
+ * Description: Source file for the HMI Micro-Controller Helper Functions
+ * Author: Ibrahim Mohamed
+ *
+ *******************************************************************************/
+
+#ifndef HMI_HELPERS_H_
+#define HMI_HELPERS_H_
+
+
+/*******************************************************************************
+ *                          	Configurations                                 *
+ *******************************************************************************/
+
+#define READY 					0x10
+
+#define DOOR_HOLD 				1
+#define DOOR_OPEN 				5
+#define DOOR_CLOSE 				5
+
+#define BUZZER_ACTIVE 			20
+
+#define PASS_LENGTH 			5
+
+#define ENTER_KEY 				'='
+#define KEYPAD_DELAY 			500
+
+#define UART_DELAY 				50
+
+/*******************************************************************************
+ *                           Functions Prototypes      	                       *
+ *******************************************************************************/
+
+void TIMER1_CallBack(void);
+
+void HMI_createPassword(void);
+
+void HMI_checkPassword(void);
+
+void HMI_changePassword(void);
+
+void HMI_openDoor(void);
+
+void HMI_mainMenu(void);
+
+#endif /* HMI_HELPERS_H_ */

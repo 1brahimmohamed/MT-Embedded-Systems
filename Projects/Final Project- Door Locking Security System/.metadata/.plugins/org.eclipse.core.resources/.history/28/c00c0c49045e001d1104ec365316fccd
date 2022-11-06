@@ -1,0 +1,68 @@
+ /******************************************************************************
+ *
+ * Module: Human Machine Interface
+ * File Name: HMI_main.c
+ * Description: Source file for the HMI Micro-Controller Main Driver File
+ * Author: Ibrahim Mohamed
+ *
+ *******************************************************************************/
+
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "HMI_Helpers.h"
+#include "lcd.h"
+#include "keypad.h"
+#include "uart.h"
+#include "timer1.h"
+
+int main(void)
+{
+	/* Set up Configurations */
+
+	/* UART Configuration
+	 * Disable Parity Bit
+	 * 1 Stop Bit
+	 * 8 Bits data
+	 * Baud Rate of 9600
+	 * */
+	UART_ConfigType UART_Config={
+			Parity_Disable,
+			Stop_Bits_1,
+			Bits_8,
+			BR_9600
+	};
+
+	/*	Timer1 Configuration
+	 * 	Initial Value: 0
+	 * 	Compare Value: 23437
+	 * 	Pre-scaler: System Clock/1024
+	 * 	Mode: Compare Mode
+	 *  */
+
+	Timer1_ConfigType timer1_Config={
+			0,
+			23437,
+			CLK_1024,
+			COMPARE
+	};
+
+	/*	activate the global interrupts	*/
+	sei();
+
+	/*	modules initialization	*/
+	UART_init(&UART_Config);
+
+	Timer1_setCallBack(TIMER1_CallBack);
+	Timer1_init(&timer1_Config);
+	LCD_init();
+
+
+	/*	Application Loop	*/
+
+	HMI_createPassword();
+
+	while(1)
+	{
+		HMI_mainMenu();
+	}
+}
